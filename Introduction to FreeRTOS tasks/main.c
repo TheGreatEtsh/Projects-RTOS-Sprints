@@ -105,52 +105,57 @@ static void prvSetupHardware( void );
 #if		TASK 		==		FIRST_TASK
 void Led_Task (void * pvParameters)
 {
+	TickType_t xLastWakeTime = xTaskGetTickCount();
 	for( ; ; )
 	{
 		/*Toggle LED every 1000ms - 1 sec -*/
 		GPIO_write(PORT_0, PIN1, PIN_IS_HIGH);
 		
-		vTaskDelay(1000);
+		vTaskDelayUntil( &xLastWakeTime, 1000 );
 		
 		GPIO_write(PORT_0, PIN1, PIN_IS_LOW);
 		
-		vTaskDelay(1000);
+		vTaskDelayUntil( &xLastWakeTime, 1000 );
 		
 	}
 }
 #elif	TASK		==		SECOND_TASK
 void Led0_Task (void * pvParameters)
 {
+	TickType_t xLastWakeTime = xTaskGetTickCount();
 	for( ; ; )
 	{
 		/*Toggle LED every 100 ms*/
-		vTaskDelay(100);
+		vTaskDelayUntil( &xLastWakeTime, 100 );
 		GPIO_toggle(PORT_0, PIN1);
 	}
 }
 
 void Led1_Task (void * pvParameters)
 {
+	TickType_t xLastWakeTime = xTaskGetTickCount();
 	for( ; ; )
 	{
 		/*Toggle LED every 500 ms*/
-		vTaskDelay(500);
+		vTaskDelayUntil( &xLastWakeTime, 500 );
 		GPIO_toggle(PORT_0, PIN2);
 	}
 }	
 
 void Led2_Task (void * pvParameters)
 {
+	TickType_t xLastWakeTime = xTaskGetTickCount();
 	for( ; ; )
 	{
 		/*Toggle LED every 1 sec*/
-		vTaskDelay(1000);
+		vTaskDelayUntil( &xLastWakeTime, 1000 );
 		GPIO_toggle(PORT_0, PIN3);
 	}
 }
 #elif	TASK		==		THIRD_TASK
 void Led_Task (void * pvParameters)
 {
+	TickType_t xLastWakeTime = xTaskGetTickCount();
 	for( ; ; )
 	{
 		/**
@@ -162,17 +167,17 @@ void Led_Task (void * pvParameters)
 		if (gl_toggling_state == TOGGLE_FAST)
 		{
 			GPIO_toggle(PORT_0, PIN1);
-			vTaskDelay(100);
+			vTaskDelayUntil( &xLastWakeTime, 100 );
 		}
 		else if (gl_toggling_state == TOGGLE_OFF)
 		{
 			GPIO_write(PORT_0, PIN1, PIN_IS_LOW);
-			vTaskDelay(100);
+			vTaskDelayUntil( &xLastWakeTime, 100 );
 		}
 		else if (gl_toggling_state == TOGGLE_SLOW)
 		{
 			GPIO_toggle(PORT_0, PIN1);
-			vTaskDelay(400);
+			vTaskDelayUntil( &xLastWakeTime, 400 );
 		}
 	}
 }
@@ -187,10 +192,10 @@ void Button_Task (void * pvParameters)
 	 */
 	static int counting_variable = 0, pressing_time = 0;
 	static pinState_t button_state = PIN_IS_LOW;
-	
+	TickType_t xLastWakeTime = xTaskGetTickCount();
 	for( ; ; )
 	{
-		vTaskDelay(50);
+		vTaskDelayUntil( &xLastWakeTime, 50 );
 		
 		/*Gets pin's state*/
 		button_state = GPIO_read(PORT_0, PIN0);
