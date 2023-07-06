@@ -131,6 +131,7 @@ static void prvSetupHardware( void );
 #if		TASK 		==		FIRST_TASK
 void led_task (void * pvParameters)
 {
+	TickType_t xLastWakeTime = xTaskGetTickCount();
 	for( ; ; )
 	{
 		vTaskDelay(1);
@@ -139,7 +140,7 @@ void led_task (void * pvParameters)
 		{
 			GPIO_toggle(PORT_0, PIN1);
 			xSemaphoreGive( user_input );
-			vTaskDelay(20);
+			vTaskDelayUntil( &xLastWakeTime, 20);
 		}
 	}
 }
@@ -152,6 +153,7 @@ void button_task (void * pvParameters)
 	static char semaphore_taken	= RELEASED;
 	/*Variable used to save pin's level*/
 	static pinState_t button_state = PIN_IS_LOW;
+	TickType_t xLastWakeTime = xTaskGetTickCount();
 	for( ; ; )
 	{
 		/*
@@ -188,7 +190,7 @@ void button_task (void * pvParameters)
 				semaphore_taken = RELEASED;
 			}
 		}
-		vTaskDelay (20);
+		vTaskDelayUntil( &xLastWakeTime, 20);
 	}
 }
 #elif	TASK		==		SECOND_TASK
@@ -196,10 +198,11 @@ void uart_0_task (void * pvParameters)
 {
 	/*counting variable used in for loop*/
 	char counting_variable = 0;
+	TickType_t xLastWakeTime = xTaskGetTickCount();
 	for( ; ; )
 	{
 		/*Delay 100 ms*/
-		vTaskDelay(100);
+		vTaskDelayUntil( &xLastWakeTime, 100 );
 		/*if mutex is released, print on uart 10 times then release the mutex*/
 		if(xSemaphoreTake( uart_mutex , (TickType_t) 0) == pdTRUE)
 		{
@@ -219,10 +222,11 @@ void uart_1_task (void * pvParameters)
 	char counting_variable = 0;
 	/*counting variable used in for load loop*/
 	int load = 0;
+	TickType_t xLastWakeTime = xTaskGetTickCount();
 	for( ; ; )
 	{
 		/*Delay 500 ms*/
-		vTaskDelay(500);
+		vTaskDelayUntil( &xLastWakeTime, 500 );
 		
 		/*
 		 * if mutex is released, print on uart 10 times 
@@ -258,10 +262,11 @@ void uart_0_task (void * pvParameters)
 {
 	/*counting variable used in for loop*/
 	EventBits_t print_state;
+	TickType_t xLastWakeTime = xTaskGetTickCount();
 	for( ; ; )
 	{
 		/*Delay 100 ms*/
-		vTaskDelay(100);
+		vTaskDelayUntil( &xLastWakeTime, 100 );
 		
 		/*Saving print_state event group status in a local Event Bits variable*/
 		print_state = xEventGroupWaitBits(
@@ -303,10 +308,11 @@ void uart_0_task (void * pvParameters)
 
 void uart_1_task (void * pvParameters)
 {
+	TickType_t xLastWakeTime = xTaskGetTickCount();
 	for( ; ; )
 	{
 		/*Delay 100 ms*/
-		vTaskDelay(100);
+		vTaskDelayUntil( &xLastWakeTime, 100 );
 		/*if mutex is released, take the mutex, print on uart then release the mutex*/
 		if(xSemaphoreTake( uart_mutex , (TickType_t) 0) == pdTRUE)
 		{
@@ -319,6 +325,7 @@ void uart_1_task (void * pvParameters)
 
 void button_0_task (void * pvParameters)
 {
+	TickType_t xLastWakeTime = xTaskGetTickCount();
 	for( ; ; )
 	{
 		/*Read button's state*/
@@ -348,7 +355,7 @@ void button_0_task (void * pvParameters)
 			gl_past_button_state_0 = gl_new_button_state_0;
 		}
 		
-		vTaskDelay (20);
+		vTaskDelayUntil( &xLastWakeTime, 20 );
 
 	}
 }
@@ -356,6 +363,7 @@ void button_0_task (void * pvParameters)
 
 void button_1_task (void * pvParameters)
 {
+	TickType_t xLastWakeTime = xTaskGetTickCount();
 	for( ; ; )
 	{
 		/*Read button's state*/
@@ -386,7 +394,7 @@ void button_1_task (void * pvParameters)
 			gl_past_button_state_1 = gl_new_button_state_1;
 		}
 		
-		vTaskDelay (20);
+		vTaskDelayUntil( &xLastWakeTime, 20 );
 	}
 }
 
